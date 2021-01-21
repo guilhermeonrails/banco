@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 
 class Contas(models.Model):
     agencia = models.CharField(max_length=10)
@@ -11,10 +12,6 @@ class Contas(models.Model):
 
     def get_ultima_movimentacao(self):
         return self.ultima_movimentacao.strftime('%d/%m/%Y %H:%M')
-    
-    @property
-    def get_saldo(self):
-        return self.saldo
 
 class Deposito(models.Model):
     conta = models.ForeignKey('Contas', on_delete=models.CASCADE)
@@ -26,3 +23,12 @@ class Deposito(models.Model):
 
     def get_data_deposito(self):
         return self.data_deposito.strftime('%d/%m/%Y %H:%M')
+
+    def get_saldo_atualizado(self):
+        novo_saldo = self.conta.saldo + self.valor
+        return novo_saldo
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            Contas.objects.filter(pk=self.conta_id).update(saldo=F('saldo')+ self.valor)
+        super().save(*args, **kwargs)

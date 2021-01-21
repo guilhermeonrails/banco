@@ -11,4 +11,4 @@ class ContaSerializer(serializers.ModelSerializer):
 class DepositoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Deposito
-        fields = ['id', 'conta', 'valor', 'get_data_deposito']
+        fields = ['id', 'conta', 'valor', 'get_data_deposito', 'get_saldo_atualizado']
